@@ -346,6 +346,18 @@
 
                 if (result.status === 'success') {
                     showToast("Report submitted successfully!");
+                    
+                    // SAVE LOCALLY FOR INSTANT UI UPDATES (Bypasses GitHub Pages CDN delay)
+                    const newReport = {
+                        date: new Date().toISOString(),
+                        description: desc,
+                        status: "Awaiting Verification",
+                        timestamp: Date.now()
+                    };
+                    let recentReports = JSON.parse(localStorage.getItem('tbay_recent_reports') || '[]');
+                    recentReports.unshift(newReport);
+                    localStorage.setItem('tbay_recent_reports', JSON.stringify(recentReports));
+
                     document.getElementById('report-desc').value = '';
                     document.getElementById('evidence-file').value = '';
                     document.getElementById('file-name-display').innerText = "Tap to attach a file";
@@ -387,19 +399,39 @@
                 // Using a timestamp cache-buster to ensure we get live ops updates
                 const url = `${GITHUB_PAGES_URL}/history/history_${codeToFetch}.json?t=${Date.now()}`;
                 
+                let fetchedData = [];
                 const response = await fetch(url);
+                if (response.ok) {
+                    fetchedData = await response.json();
+                }
+
+                // ---------------------------------------------------------
+                // MERGE RECENT LOCAL SUBMISSIONS (Fixes GitHub CDN 1-2m delay)
+                // ---------------------------------------------------------
+                let recentReports = JSON.parse(localStorage.getItem('tbay_recent_reports') || '[]');
+                let validRecents = [];
+                
+                recentReports.forEach(recent => {
+                    // Discard local cache if older than 15 minutes (GitHub has definitely updated by now)
+                    if (Date.now() - recent.timestamp > 15 * 60 * 1000) return;
+                    
+                    // Prevent duplicates if GitHub has already published this report
+                    const alreadyInGithub = fetchedData.some(item => item.description === recent.description);
+                    if (!alreadyInGithub) {
+                        validRecents.push(recent);
+                        fetchedData.unshift(recent); // Add to the top of the display list
+                    }
+                });
+                
+                // Keep only the valid recent ones in local storage
+                localStorage.setItem('tbay_recent_reports', JSON.stringify(validRecents));
+
                 loading.style.display = 'none';
                 isHistoryLoaded = true;
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        renderHistoryList(data);
-                    } else {
-                        empty.classList.remove('hidden');
-                    }
+                if (fetchedData.length > 0) {
+                    renderHistoryList(fetchedData);
                 } else {
-                    // 404 means the user has never submitted a report yet
                     empty.classList.remove('hidden');
                 }
             } catch (err) {
