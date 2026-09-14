@@ -41,38 +41,33 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
-        
+
+        /* Strong Safe Area for Dynamic Island and Notches */
         .header-safe-area {
             padding-top: calc(max(24px, env(safe-area-inset-top)) + 20px);
         }
-
-        input[type="text"], textarea {
-            width: 100%; padding: 20px; border-radius: 12px;
-            border: 2px solid #e2e8f0; background: white;
-            font-family: inherit; font-size: 16px; transition: border-color 0.2s;
-            box-sizing: border-box; line-height: 1.5;
-        }
-        input[type="text"]:focus, textarea:focus { outline: none; border-color: #00cccc; }
         
-        textarea::placeholder, input[type="text"]::placeholder {
-            padding-left: 4px;
+        input[type="text"], textarea {
+            width: 100%; 
+            padding: 16px 20px; /* Added more breathing room around the text */
+            border-radius: 12px;
+            border: 2px solid #e2e8f0; 
+            background: white;
+            font-family: inherit; 
+            font-size: 16px; 
+            transition: border-color 0.2s;
         }
-
-        .file-upload-wrapper {
-            position: relative; overflow: hidden; display: inline-block; width: 100%;
+        
+        textarea::placeholder {
+            padding-left: 4px; /* Space on the left border of the placeholder */
         }
-        .file-upload-wrapper input[type=file] {
-            font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%;
+        
+        input[type="text"]:focus, textarea:focus { 
+            outline: none; 
+            border-color: #00cccc; 
         }
-
-        .loader {
-            border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white;
-            border-radius: 50%; width: 20px; height: 20px;
-            animation: spin 1s linear infinite; display: none;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast {
             position: fixed; top: calc(max(24px, env(safe-area-inset-top)) + 16px);
@@ -82,13 +77,23 @@
         }
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
         
-        /* Custom scrollbar for history */
-        .history-scroll::-webkit-scrollbar { width: 4px; }
-        .history-scroll::-webkit-scrollbar-track { background: transparent; }
-        .history-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white;
+            border-radius: 50%; width: 20px; height: 20px;
+            animation: spin 1s linear infinite; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .tab-btn.active { color: #046f70; border-bottom: 3px solid #00cccc; font-weight: 800; }
-        .tab-btn { color: #94a3b8; font-weight: 600; border-bottom: 3px solid transparent; }
+        .file-upload-wrapper {
+            position: relative; overflow: hidden; display: inline-block; width: 100%;
+        }
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%;
+        }
+
+        /* Tab switching styles */
+        .tab-btn { color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .tab-btn.active { color: #00cccc; border-bottom: 2px solid #00cccc; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -99,105 +104,77 @@
 
     <div class="app-container">
         
-        <!-- Header -->
-        <div class="header-safe-area bg-tbNavy px-6 pb-6 relative shrink-0 text-white rounded-b-3xl shadow-sm z-20">
-            <div class="flex items-center justify-between mt-2 mb-4">
-                <button onclick="closeAppPage()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 active:bg-white/20 transition">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <div class="header-safe-area bg-tbNavy px-6 pb-6 relative shrink-0 text-white shadow-sm z-50">
+            <div class="flex items-center justify-between">
+                <button onclick="closeAppPage()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 active:bg-white/20 transition -ml-2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
                 <img src="https://mcusercontent.com/4ceda90aa48260f0c3c397068/images/3089e9cb-945f-b383-b957-d5175b3d8c39.png" alt="Tbay" class="h-6 brightness-0 invert">
-                <div class="w-8"></div>
+                <div class="w-10"></div>
             </div>
             
-            <div class="text-center relative z-10">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-tbCyan/20 mb-3 border border-tbCyan/30">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00cccc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <h1 class="text-2xl font-black text-white mb-1">Community Protection</h1>
-                <p class="text-white/80 text-sm">Help us keep Tbay safe by reporting suspicious activity.</p>
-            </div>
+            <h1 class="text-2xl font-black text-white mt-6 mb-1">Community Protection</h1>
+            <p class="text-sm text-white/80 leading-relaxed">Help us keep the platform safe. Report suspicious activity and earn a 1% Rate-Up Coupon.</p>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="flex bg-white shadow-sm shrink-0 px-6 pt-2 sticky top-0 z-10">
-            <button onclick="switchTab('report')" id="tab-report" class="tab-btn active flex-1 py-3 text-sm transition">Submit Report</button>
-            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 py-3 text-sm transition">My History</button>
+        <div class="bg-white border-b border-gray-200 flex px-2 shrink-0">
+            <button onclick="switchTab('report')" id="tab-report" class="tab-btn active flex-1 py-4 text-sm font-bold">Submit Report</button>
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 py-4 text-sm font-bold">My History</button>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-1 overflow-y-auto px-6 py-6 history-scroll relative">
+        <div class="flex-1 overflow-y-auto px-6 py-6 relative">
             
-            <!-- VIEW: REPORT FORM -->
-            <div id="view-report">
+            <div id="view-report" class="space-y-6">
                 
-                <!-- Notice Box -->
-                <div class="bg-tbWarn/10 border-l-4 border-tbWarn rounded-r-xl p-4 mb-6">
-                    <h3 class="font-bold text-yellow-800 text-sm mb-1 flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                        Reward Details
-                    </h3>
-                    <p class="text-xs text-yellow-700 leading-relaxed">You can submit as many feedback reports as you want! If verified by our team, you will receive a <strong>1% Rate-Up Coupon</strong> directly to your account within 48 hours (Max 1 coupon earned per day).</p>
-                </div>
-
-                <!-- Auth Check Block -->
-                <div id="referral-block" class="mb-6">
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Your Referral Code</label>
-                    <input type="text" id="referral-input" placeholder="e.g. 83GF5q" autocapitalize="characters" class="font-bold text-lg tracking-wider" oninput="validateForm()">
-                    <p class="text-[11px] text-gray-500 mt-1">Required to send your reward to the correct account.</p>
-                </div>
-
-                <!-- Feedback Form -->
-                <div class="space-y-6">
+                <div class="bg-tbCyan/10 border border-tbCyan/30 rounded-xl p-4 flex gap-3 items-start">
+                    <div class="text-xl">🛡️</div>
                     <div>
-                        <label class="block font-bold text-tbDark mb-2">What happened?</label>
-                        <textarea id="desc-input" rows="5" placeholder="Please describe the suspicious activity, when it happened, and who was involved..." class="text-sm" oninput="validateForm()"></textarea>
+                        <h4 class="font-bold text-tbCyanDark text-sm">We take your safety seriously</h4>
+                        <p class="text-xs text-gray-600 mt-1">If anyone asks you to trade outside the app or requests your PIN/password, report them here. <b>Limit: 1 coupon per day for eligible reports.</b></p>
                     </div>
-
-                    <div>
-                        <label class="block font-bold text-tbDark mb-2 flex justify-between">
-                            <span>Upload Evidence</span>
-                            <span class="text-xs text-gray-400 font-normal">Optional (Max 10MB)</span>
-                        </label>
-                        <div class="file-upload-wrapper bg-white border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:bg-gray-50 transition">
-                            <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                            <p class="text-sm font-semibold text-gray-600" id="file-name-display">Tap to select Photo or Video</p>
-                            <p class="text-xs text-gray-400 mt-1">Screenshots of chats are highly recommended.</p>
-                            <input type="file" id="evidence-input" accept="image/*,video/mp4,video/quicktime" onchange="handleFileSelect(this)">
-                        </div>
-                        <p id="file-error" class="text-xs text-red-500 mt-2 font-semibold hidden">File is too large. Please select a file under 10MB.</p>
-                    </div>
-
-                    <button onclick="submitFeedback()" id="btn-submit" class="w-full bg-tbCyan text-tbDark font-bold py-4 rounded-xl active:scale-95 transition flex justify-center items-center gap-2" disabled>
-                        <span id="btn-text">Submit Report</span>
-                        <div class="loader !border-tbDark/30 !border-t-tbDark" id="loader-submit"></div>
-                    </button>
                 </div>
+
+                <div id="referral-input-container">
+                    <label class="block font-bold text-tbDark mb-2 text-sm">Your Tbay Referral Code</label>
+                    <input type="text" id="referral-input" placeholder="e.g. 83GF5q" autocapitalize="characters" class="font-bold tracking-widest text-lg">
+                    <p class="text-[11px] text-gray-500 mt-1">Required to send your coupon.</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-tbDark mb-2 text-sm">What happened?</label>
+                    <textarea id="report-desc" rows="4" placeholder="Describe the incident briefly..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-tbDark mb-2 text-sm">Evidence (Photo/Video)</label>
+                    <div class="file-upload-wrapper bg-white border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer active:bg-gray-50 transition">
+                        <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <p class="text-sm font-bold text-tbCyanDark" id="file-name-display">Tap to attach a file</p>
+                        <p class="text-xs text-gray-500 mt-1">Max size: 10MB</p>
+                        <input type="file" id="evidence-file" accept="image/*,video/mp4,video/quicktime" onchange="handleFileSelect(this)">
+                    </div>
+                </div>
+
+                <button onclick="submitFeedback()" id="btn-submit" class="w-full bg-tbCyan text-tbDark font-bold py-4 rounded-xl active:scale-95 transition flex justify-center items-center gap-2 mt-4">
+                    <span id="btn-submit-text">Submit Report</span>
+                    <div class="loader !border-tbDark/30 !border-t-tbDark" id="loader-submit"></div>
+                </button>
             </div>
 
-            <!-- VIEW: HISTORY -->
             <div id="view-history" class="hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-tbDark">Submission History</h2>
-                    <button onclick="fetchHistory()" class="text-tbCyanDark text-xs font-bold uppercase active:opacity-70 flex items-center gap-1">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                        Refresh
-                    </button>
+                <div id="history-loading" class="text-center py-10 hidden">
+                    <div class="loader !border-tbCyan/30 !border-t-tbCyan !w-8 !h-8 mx-auto !block"></div>
+                    <p class="text-sm text-gray-500 mt-3 font-semibold">Loading your reports...</p>
                 </div>
                 
-                <div id="history-loading" class="py-12 text-center text-gray-400">
-                    <div class="loader !border-gray-200 !border-t-tbCyan mx-auto mb-3" style="display:block"></div>
-                    <p class="text-sm">Loading your reports...</p>
+                <div id="history-empty" class="text-center py-12 hidden">
+                    <div class="text-4xl mb-3 opacity-50">📂</div>
+                    <h3 class="font-bold text-gray-400">No reports found</h3>
+                    <p class="text-xs text-gray-400 mt-1">When you submit a report, it will appear here.</p>
                 </div>
 
-                <div id="history-empty" class="hidden py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    </div>
-                    <p class="text-sm text-gray-500 font-semibold">No feedback reports found.</p>
-                </div>
-
-                <div id="history-list" class="space-y-4">
-                    <!-- Cards injected by JS -->
+                <div id="history-list" class="space-y-4 pb-8">
+                    <!-- History items injected here -->
                 </div>
             </div>
 
@@ -205,65 +182,77 @@
     </div>
 
     <script>
-        // REPLACE WITH YOUR APPS SCRIPT URL AFTER DEPLOYMENT
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxQkFbL0aUsEVofTixleMRsN1Z3M0lJCaeIaa1t-6RljUSy0D7s5Unfsqz0DmpynMMp/exec";
+        // --- CONFIGURATION ---
+        // UPDATE THESE URLS AFTER DEPLOYMENT
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxQkFbL0aUsEVofTixleMRsN1Z3M0lJCaeIaa1t-6RljUSy0D7s5Unfsqz0DmpynMMp/exec"; 
+        const GITHUB_PAGES_URL = "https://tbay-labs.github.io/security-feedback/"; // e.g. https://tbay-labs.github.io/community-protection
 
-        let userId = "";
-        let appUserId = "";
-        let base64FileData = null;
+        let userId = null;
+        let appUserId = null;
+        let savedCode = null;
+        let base64File = null;
         let fileName = null;
         let isHistoryLoaded = false;
 
-        // --- Initialization ---
-        function initApp() {
-            // 1. Get/Create Browser User ID
+        // --- Initialization & User Mapping ---
+        function init() {
+            // Generate or fetch Browser ID
             userId = localStorage.getItem('tbay_protection_uid');
             if (!userId) {
                 userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
                 localStorage.setItem('tbay_protection_uid', userId);
             }
 
-            // 2. Check App URL for ID mapping
+            // Check URL for App User ID (?uid=...)
             const urlParams = new URLSearchParams(window.location.search);
-            appUserId = urlParams.get('uid') || "";
+            appUserId = urlParams.get('uid');
+
             if (appUserId) {
                 const savedMapping = localStorage.getItem('tbay_id_mapped');
                 if (savedMapping !== appUserId) {
                     fetch(GAS_URL, {
                         method: 'POST',
                         body: JSON.stringify({ action: 'mapUserId', appUserId: appUserId, browserUserId: userId })
-                    }).then(r => r.json()).then(d => { if (d.status === 'success') localStorage.setItem('tbay_id_mapped', appUserId); }).catch(e=>{});
+                    }).then(r => r.json()).then(data => {
+                        if(data.status === 'success') localStorage.setItem('tbay_id_mapped', appUserId);
+                    }).catch(e => console.log("Mapping Error"));
                 }
             }
 
-            // 3. Auto-fill Referral Code if available from other campaigns
-            let storedCode = "";
+            // Detect previously saved referral codes from Streak or Survey
             try {
-                const secUser = JSON.parse(localStorage.getItem('tbay_security_user'));
-                if (secUser && secUser.code) storedCode = secUser.code;
+                let existingUser = JSON.parse(localStorage.getItem('tbay_security_user'));
+                if (existingUser && existingUser.code) savedCode = existingUser.code;
+                
+                if (!savedCode) {
+                    let surveyData = JSON.parse(localStorage.getItem('tbay_survey_data'));
+                    if (surveyData && surveyData.referralCode) savedCode = surveyData.referralCode;
+                }
+                
+                if (!savedCode) {
+                    savedCode = localStorage.getItem('tbay_protection_code');
+                }
             } catch(e) {}
 
-            if (!storedCode) {
-                try {
-                    const surUser = JSON.parse(localStorage.getItem('tbay_survey_data'));
-                    if (surUser && surUser.referralCode) storedCode = surUser.referralCode;
-                } catch(e) {}
-            }
-            
-            if (!storedCode) storedCode = localStorage.getItem('tbay_protection_code') || "";
-
-            const refInput = document.getElementById('referral-input');
-            if (storedCode) {
-                refInput.value = storedCode;
-                // If we found a code, hide the input block entirely for a smoother UX
-                document.getElementById('referral-block').style.display = 'none';
+            if (savedCode) {
+                document.getElementById('referral-input').value = savedCode;
+                document.getElementById('referral-input-container').style.display = 'none';
             }
         }
 
         // --- UI Interactions ---
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.style.borderColor = isError ? '#e74c3c' : '#00cccc';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
         function switchTab(tab) {
             document.getElementById('tab-report').classList.toggle('active', tab === 'report');
             document.getElementById('tab-history').classList.toggle('active', tab === 'history');
+            
             document.getElementById('view-report').classList.toggle('hidden', tab !== 'report');
             document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
 
@@ -272,96 +261,74 @@
             }
         }
 
-        function showToast(msg, isError = false) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.style.borderColor = isError ? '#ef4444' : '#00cccc';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // --- Form Logic ---
-        function validateForm() {
-            const code = document.getElementById('referral-input').value.trim();
-            const desc = document.getElementById('desc-input').value.trim();
-            const btn = document.getElementById('btn-submit');
-            
-            // Code must be exactly 6 chars, description must be at least 15 chars
-            btn.disabled = !(code.length === 6 && desc.length >= 15);
-        }
-
+        // --- File Handling ---
         function handleFileSelect(input) {
             const file = input.files[0];
-            const display = document.getElementById('file-name-display');
-            const errorMsg = document.getElementById('file-error');
-            
-            errorMsg.classList.add('hidden');
-            base64FileData = null;
-            fileName = null;
+            if (!file) return;
 
-            if (!file) {
-                display.innerText = "Tap to select Photo or Video";
-                return;
-            }
-
-            // 10MB Limit
-            if (file.size > 10 * 1024 * 1024) {
-                errorMsg.classList.remove('hidden');
-                display.innerText = "Tap to select Photo or Video";
+            // 10MB limit (10 * 1024 * 1024)
+            if (file.size > 10485760) {
+                showToast("File is too large. Maximum size is 10MB.", true);
                 input.value = "";
+                document.getElementById('file-name-display').innerText = "Tap to attach a file";
                 return;
             }
 
-            display.innerText = file.name;
             fileName = file.name;
+            document.getElementById('file-name-display').innerText = fileName;
+            document.getElementById('file-name-display').classList.remove('text-tbCyanDark');
+            document.getElementById('file-name-display').classList.add('text-tbDark');
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Extract just the base64 part, ignoring the Data URL prefix
-                base64FileData = e.target.result.split(',')[1];
+                // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
+                base64File = e.target.result.split(',')[1];
             };
             reader.readAsDataURL(file);
         }
 
+        // --- Submit Logic ---
         async function submitFeedback() {
-            const code = document.getElementById('referral-input').value.trim();
-            const desc = document.getElementById('desc-input').value.trim();
+            let inputCode = document.getElementById('referral-input').value.trim();
+            if (!savedCode && inputCode) {
+                if (inputCode.length !== 6) return showToast("Referral code must be exactly 6 characters.", true);
+                savedCode = inputCode;
+                localStorage.setItem('tbay_protection_code', savedCode);
+            }
             
-            const btn = document.getElementById('btn-submit');
-            const btnText = document.getElementById('btn-text');
-            const loader = document.getElementById('loader-submit');
-            
-            btn.disabled = true;
-            btnText.innerText = "Submitting...";
-            loader.style.display = "block";
+            const desc = document.getElementById('report-desc').value.trim();
+            if (!desc) return showToast("Please describe what happened.", true);
+            if (!savedCode) return showToast("Referral code is required.", true);
 
-            // Save code for future use
-            localStorage.setItem('tbay_protection_code', code);
+            const btnText = document.getElementById('btn-submit-text');
+            const loader = document.getElementById('loader-submit');
+            const btn = document.getElementById('btn-submit');
+
+            btn.disabled = true;
+            btnText.innerText = 'Submitting...';
+            loader.style.display = 'block';
 
             // Detect Device Type
-            let deviceType = "Unknown";
             const ua = navigator.userAgent;
-            if (/android/i.test(ua)) deviceType = "Android";
-            else if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) deviceType = "iOS";
-            else if (/Mac/i.test(ua)) deviceType = "Mac";
-            else if (/Win/i.test(ua)) deviceType = "Windows";
+            let device = "Unknown";
+            if (/android/i.test(ua)) device = "Android";
+            else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
+            else if (/Mac/i.test(ua)) device = "Mac";
+            else if (/Win/i.test(ua)) device = "Windows";
 
-            // Detect Timezone
-            let timeZone = "Unknown";
-            try {
-                timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            } catch(e) {}
+            // Get local timezone
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             const payload = {
                 action: 'submitReport',
                 browserUserId: userId,
-                appUserId: appUserId,
-                referralCode: code,
+                appUserId: appUserId || "",
+                referralCode: savedCode,
                 description: desc,
-                base64File: base64FileData,
+                base64File: base64File,
                 fileName: fileName,
-                deviceType: deviceType,
-                timezone: timeZone
+                deviceType: device,
+                timezone: tz
             };
 
             try {
@@ -370,107 +337,117 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
+                
                 const result = await response.json();
+                
+                btn.disabled = false;
+                btnText.innerText = 'Submit Report';
+                loader.style.display = 'none';
 
                 if (result.status === 'success') {
-                    showToast("Feedback submitted successfully!");
-                    document.getElementById('desc-input').value = "";
-                    document.getElementById('evidence-input').value = "";
-                    document.getElementById('file-name-display').innerText = "Tap to select Photo or Video";
-                    base64FileData = null; fileName = null;
-                    validateForm();
+                    showToast("Report submitted successfully!");
+                    document.getElementById('report-desc').value = '';
+                    document.getElementById('evidence-file').value = '';
+                    document.getElementById('file-name-display').innerText = "Tap to attach a file";
+                    base64File = null; fileName = null;
+                    isHistoryLoaded = false; // Force refresh next time tab is opened
                     
-                    // Auto-refresh history in background
-                    isHistoryLoaded = false; 
-                    switchTab('history');
+                    if (document.getElementById('referral-input-container').style.display !== 'none') {
+                        document.getElementById('referral-input-container').style.display = 'none';
+                    }
+                    setTimeout(() => switchTab('history'), 1000);
                 } else {
-                    showToast("Error submitting feedback. Please try again.", true);
+                    showToast("Submission failed. Please try again.", true);
                 }
             } catch (err) {
+                btn.disabled = false;
+                btnText.innerText = 'Submit Report';
+                loader.style.display = 'none';
                 showToast("Network error. Please check your connection.", true);
-            } finally {
-                btnText.innerText = "Submit Report";
-                loader.style.display = "none";
-                validateForm(); // Re-check button state
             }
         }
 
-        // --- History Logic ---
+        // --- History Logic (Fetched directly from GitHub static JSON) ---
         async function fetchHistory() {
-            const code = document.getElementById('referral-input').value.trim() || localStorage.getItem('tbay_protection_code');
+            const codeToFetch = savedCode || document.getElementById('referral-input').value.trim();
             const loading = document.getElementById('history-loading');
             const empty = document.getElementById('history-empty');
             const list = document.getElementById('history-list');
+
+            if (!codeToFetch) {
+                empty.classList.remove('hidden');
+                return;
+            }
 
             loading.style.display = 'block';
             empty.classList.add('hidden');
             list.innerHTML = '';
 
             try {
-                const response = await fetch(GAS_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'getHistory', referralCode: code, browserUserId: userId })
-                });
-                const result = await response.json();
-
+                // Using a timestamp cache-buster to ensure we get live ops updates
+                const url = `${GITHUB_PAGES_URL}/history/history_${codeToFetch}.json?t=${Date.now()}`;
+                
+                const response = await fetch(url);
                 loading.style.display = 'none';
                 isHistoryLoaded = true;
 
-                if (result.status === 'success' && result.data.length > 0) {
-                    renderHistoryList(result.data);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        renderHistoryList(data);
+                    } else {
+                        empty.classList.remove('hidden');
+                    }
                 } else {
+                    // 404 means the user has never submitted a report yet
                     empty.classList.remove('hidden');
                 }
             } catch (err) {
                 loading.style.display = 'none';
-                showToast("Failed to load history.", true);
+                empty.classList.remove('hidden');
             }
         }
 
-        function renderHistoryList(reports) {
+        function renderHistoryList(data) {
             const list = document.getElementById('history-list');
-            let html = '';
+            list.innerHTML = '';
 
-            reports.forEach(report => {
-                // Determine Tag Style based on Status
-                let statusClass = "bg-yellow-100 text-yellow-700 border-yellow-200"; // Default: Awaiting Verification
-                let icon = `<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>`; // clock
+            data.forEach(item => {
+                let statusColor = "bg-yellow-100 text-yellow-800 border-yellow-200"; // Awaiting
+                let statusIcon = "⏳";
                 
-                const statusUpper = report.status.trim().toUpperCase();
-                
-                if (statusUpper.includes("ELIGIBLE") && !statusUpper.includes("NOT")) {
-                    statusClass = "bg-green-100 text-green-700 border-green-200";
-                    icon = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`; // check
-                } else if (statusUpper.includes("NOT ELIGIBLE")) {
-                    statusClass = "bg-gray-100 text-gray-500 border-gray-200";
-                    icon = `<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>`; // x
+                const statLower = item.status.toLowerCase();
+                if (statLower.includes("eligible") || statLower.includes("added")) {
+                    statusColor = "bg-green-100 text-green-800 border-green-200";
+                    statusIcon = "✅";
+                } else if (statLower.includes("not eligible") || statLower.includes("rejected")) {
+                    statusColor = "bg-red-100 text-red-800 border-red-200";
+                    statusIcon = "❌";
                 }
 
-                // Format Date (assuming it comes back as ISO string or readable string from Sheets)
-                let dateDisplay = "Recently";
+                // Format Date nicely
+                let displayDate = item.date;
                 try {
-                    const d = new Date(report.date);
-                    if (!isNaN(d)) dateDisplay = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const d = new Date(item.date);
+                    displayDate = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 } catch(e) {}
 
-                html += `
-                    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold text-gray-400">${dateDisplay}</span>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusClass}">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${icon}</svg>
-                                ${report.status}
+                const html = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-gray-400">${displayDate}</span>
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-md border ${statusColor}">
+                                ${statusIcon} ${item.status}
                             </span>
                         </div>
-                        <p class="text-sm text-tbDark line-clamp-2">${report.description}</p>
+                        <p class="text-sm text-gray-700 leading-relaxed">${item.description}</p>
                     </div>
                 `;
+                list.insertAdjacentHTML('beforeend', html);
             });
-            list.innerHTML = html;
         }
 
-        // --- App Routing ---
+        // --- App Bridge Close ---
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         function closeAppPage() {
             if (isIOS) {
@@ -479,10 +456,12 @@
                 } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.close) {
                     window.webkit.messageHandlers.close.postMessage("");
                 } else { window.history.back(); }
-            } else { window.location.href = 'http://dl.tbay.store/'; }
+            } else { 
+                window.location.href = 'http://dl.tbay.store/'; 
+            }
         }
 
-        window.onload = initApp;
+        window.onload = init;
     </script>
 </body>
 </html>
